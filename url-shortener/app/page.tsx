@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 const page = () => {
   const [url, setUrl] = useState("");
+  const [short, setShort] = useState("");
+  
   const handleSubmit = async () => {
     const res = await fetch("/api/shorten", {
       method: "POST",
@@ -10,6 +12,7 @@ const page = () => {
       headers: { "Content-Type": "application/json" },
     });
     const data = await res.json();
+    setShort(`${window.location.origin}/api/shorten/${data.shortCode}`);
   };
   return (
     <>
@@ -24,9 +27,11 @@ const page = () => {
       <button onClick={handleSubmit} className="bg-blue-500 text-white px-4 py-2 rounded">
         Shorten
       </button>
+      {short && (
         <p className="mt-4 text-green-600">
-          Short URL: <a className="underline"></a>
+          Short URL: <a className="underline"href={short}>{short}</a>
         </p>
+      )}
     </main>
     </>
   )
