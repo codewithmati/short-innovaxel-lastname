@@ -5,35 +5,37 @@ import { NextRequest, NextResponse } from "next/server";
 
 // GET handler
 export async function GET(
-  _req: NextRequest,
-  context: { params: { shortCode: string } }
-) {
-  try {
-    const { params } = context;
-    await connectToDB();
-
-    if (!params?.shortCode) {
-      return NextResponse.json({ error: "Short code required" }, { status: 400 });
+    _req: NextRequest,
+    context: { params: { shortCode: string } }
+  ) {
+    try {
+      const { params } = context;
+  
+      if (!params?.shortCode) {
+        return NextResponse.json({ error: "Short code required" }, { status: 400 });
+      }
+  
+      await connectToDB();
+  
+      const data = await ShortUrl.findOne({ shortCode: params.shortCode });
+  
+      if (!data) {
+        return NextResponse.json({ error: "URL not found" }, { status: 404 });
+      }
+  
+      return NextResponse.json({
+        id: data._id,
+        url: data.longUrl,
+        shortCode: data.shortCode,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt
+      });
+    } catch (err) {
+      console.error("GET API Error:", err);
+      return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
-
-    const data = await ShortUrl.findOne({ shortCode: params.shortCode });
-
-    if (!data) {
-      return NextResponse.json({ error: "URL not found" }, { status: 404 });
-    }
-
-    return NextResponse.json({
-      id: data._id,
-      url: data.longUrl,
-      shortCode: data.shortCode,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt
-    });
-  } catch (err) {
-    console.error("GET API Error:", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
-}
+  
 
 // PUT handler
 export async function PUT(
