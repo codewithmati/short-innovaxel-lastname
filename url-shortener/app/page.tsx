@@ -4,7 +4,7 @@ import { useState } from 'react'
 const page = () => {
   const [url, setUrl] = useState("");
   const [short, setShort] = useState("");
-  
+
   const handleSubmit = async () => {
     const res = await fetch("/api/shorten", {
       method: "POST",
@@ -16,7 +16,7 @@ const page = () => {
   };
   return (
     <>
-      <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
+      <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-600">
       <h1 className="text-3xl font-bold mb-4">URL Shortener</h1>
       <input
         className="border p-2 w-full max-w-md mb-4"
