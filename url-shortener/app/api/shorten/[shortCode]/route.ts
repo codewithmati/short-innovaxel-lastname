@@ -77,22 +77,25 @@ export async function PUT(
 
 // DELETE handler
 export async function DELETE(
-  _req: NextRequest,
-  context: { params: { shortCode: string } }
-) {
-  try {
-    const { params } = context;
-    await connectToDB();
-
-    const deleted = await ShortUrl.findOneAndDelete({ shortCode: params.shortCode });
-
-    if (!deleted) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    _req: NextRequest,
+    { params }: { params: { shortCode: string } }
+  ) {
+    try {
+      await connectToDB();
+  
+      if (!params?.shortCode) {
+        return NextResponse.json({ error: "Short code is required" }, { status: 400 });
+      }
+  
+      const deleted = await ShortUrl.findOneAndDelete({ shortCode: params.shortCode });
+  
+      if (!deleted) {
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
+      }
+  
+      return new NextResponse(null, { status: 204 });
+    } catch (err) {
+      console.error("DELETE API Error:", err);
+      return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
-
-    return new NextResponse(null, { status: 204 });
-  } catch (err) {
-    console.error("DELETE API Error:", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
-}
